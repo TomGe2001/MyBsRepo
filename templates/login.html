@@ -3,33 +3,141 @@
 <head>
     <title>登录</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/login&register.css') }}">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+            background-color: rgb(12, 14, 18) !important;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #24292e;
+            height: 100vh;
+            line-height: 1.5;
+            margin: 0;
+        }
 
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .container {
+            background-color: rgb(18, 21, 25);
+            width: 300px;
+            margin: auto;
+            padding: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-weight: bold;
+            color: #FFFFFF;
+        }
+
+        input[type="text"],
+        input[type="password"] {
+            color: black;
+            padding: 8px;
+            font-size: 16px;
+            width: 100%;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        a {
+            color: #0366d6;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        a.link {
+            float: right;
+        }
+
+        .flash-message {
+            color: green;
+        }
+
+        .error-message {
+            color: red;
+            font-weight: bold;
+        }
+
+        .btn {
+            display: block;
+            width: 150px;
+            margin: 0 auto;
+            padding: 8px 16px;
+            font-size: 16px;
+            font-weight: bold;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            background-color: rgb(41,151,62);
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        .btn:hover {
+            background-color: #005cc5;
+        }
+
+        .link {
+            color: #0366d6;
+            text-decoration: none;
+        }
+
+        .link:hover {
+            text-decoration: underline;
+        }
+
+        .footer {
+            padding: 16px;
+            background-color: #f6f8fa;
+        }
+
+        h1 {
+            font-size: x-large;
+            margin-bottom: 30px;
+            color: #fff;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-    <div class="card">
-        <div class="card-header">Login</div>
-        <div class="card-body">
-            <form method="POST" action="/login">
-                <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" name="username" placeholder="Username"
-                           required autofocus>
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control form-control-lg" name="password" placeholder="PassWord"
-                           required>
-                </div>
-                <button type="submit" class="btn btn-lg btn-primary btn-block">Jump In</button>
-                <div class="forgot-password">
-                    <a href="{{ url_for('reset') }}">Forget</a>
-                </div>
-                <div class="create-account">
-                    No account yet? <a href="{{ url_for('register') }}">Register</a>.
-                </div>
-            </form>
+    <form method="post">
+        {% for msg in get_flashed_messages(category_filter=['ok']) %}
+            <p class="flash-message">{{ msg }}</p>
+        {% endfor %}
+        <div class="from-group">
+            <h1>Login</h1>
         </div>
-    </div>
+        <div class="form-group">
+            {{ form.account }}
+            {% for error in form.account.errors %}
+                <p class="error-message">{{ error }}</p>
+            {% endfor %}
+        </div>
+        <div class="form-group">
+            {{ form.pwd }}
+            {% for error in form.pwd.errors %}
+                <p class="error-message">{{ error }}</p>
+            {% endfor %}
+        </div>
+        <a class="link" href="/register/">Go to register</a>
+        <br>
+        {{ form.csrf_token }}
+        <button class="btn" type="submit">Jump In</button>
+    </form>
 </div>
 </body>
 </html>
