@@ -22,10 +22,10 @@
                 </div>
                 <button type="submit" class="btn btn-lg btn-primary btn-block">Jump In</button>
                 <div class="forgot-password">
-                    <a href="#">Forget</a>
+                    <a href="{{ url_for('reset') }}">Forget</a>
                 </div>
                 <div class="create-account">
-                    No account yet? <a href="#">Register</a>.
+                    No account yet? <a href="{{ url_for('register') }}">Register</a>.
                 </div>
             </form>
         </div>

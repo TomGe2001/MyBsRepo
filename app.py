@@ -1,22 +1,9 @@
-from flask import Flask, render_template, redirect, url_for, flash
-from flask_sqlalchemy import SQLAlchemy
-from flask_wtf import CSRFProtect
-import secrets
-from module.forms import FlaskForm, LoginForm, RegisterForm
+from flask import Flask, render_template, redirect, url_for, flash, session
+from werkzeug.security import check_password_hash, generate_password_hash
+from forms import LoginForm, RegisterForm
+from models import User, db, app
 
-db = SQLAlchemy()
-app = Flask(__name__)
-
-app.config['SECRET_KEY'] = secrets.token_hex(16)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'mariadb://root:@localhost:3306/bs_db'
-csrf = CSRFProtect(app)
-db.init_app(app)
-
-
-class User(db.Model):
-    __tablename__ = 'users'
-    username = db.Column(db.String(40), unique=True, nullable=False, primary_key=True)
-    password = db.Column(db.String(40), nullable=False)
+app.config["SECRET_KEY"] = "12345678"
 
 
 @app.route('/')
@@ -24,36 +11,45 @@ def index():
     return render_template('index.html')
 
 
-@app.route('/login')
+@app.route('/login', methods=["GET", "POST"])
 def login():
     form = LoginForm()
     if form.validate_on_submit():
-        # 查询数据库中是否有此用户
-        user = User.query.filter_by(username=form.username.data).first()
-        if user is not None and user.verify_password(form.password.data):
-            # TODO: 设置用户为已登录
-            # login_user(user, remember=form.remember_me.data)
-            # 成功信息
-            flash('Logged in successfully.')
-            return redirect(url_for('index'))
-        # 错误信息
-        flash('Invalid username or password.')
-    return render_template('login.html', form=form)
+        data = form.data
+        session['user'] = data['account']
+        flash("登录成功", "ok")
+        return redirect("/art/list/1")
+    # 返回登录template
+    return render_template("login.html", title="login", form=form)
 
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/register', methods=["GET", "POST"])
 def register():
     form = RegisterForm()
     if form.validate_on_submit():
-        # 在数据库中创建一个新用户
-        user = User(username=form.username.data, password=form.password.data)
+        data = form.data
+        # 保存数据
+        user = User(
+            account=data["account"],
+            # 对于pwd进行加密
+            pwd=generate_password_hash(data["pwd"]),
+        )
         db.session.add(user)
         db.session.commit()
-        flash('You can now login')
-        return redirect(url_for('login'))
-    return render_template('register.html', form=form)
+        # 定义一个会话的闪现
+        flash("注册成功, 请登录", "ok")
+    return render_template("register.html", title="注册", form=form)
+
+
+@app.route('/jump')
+def jump():
+    return render_template('main.html')
+
+
+@app.route('/reset')
+def reset():
+    return render_template('reset.html')
 
 
 if __name__ == '__main__':
-    db.create_all()
-    app.run()
+    app.run(debug=True, host="127.0.0.1", port=8080)

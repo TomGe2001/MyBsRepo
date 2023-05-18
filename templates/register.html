@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>登录</title>
+    <title>注册</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login&register.css') }}">
-
 </head>
 <body>
 <div class="container">
@@ -12,19 +11,31 @@
         <div class="card-header">Register</div>
         <div class="card-body">
             <form method="POST" action="/register">
+                <div class="form-group">
+                    {{ form.account }}
+                    {% for error in form.account.errors %}
+                        <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.pwd }}
+                    {% for error in form.pwd.errors %}
+                        <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                </div>
+                <div class="form-group">
+                    {{ form.re_pwd }}
+                    {% for error in form.re_pwd.errors %}
+                        <p style="color: red">{{ error }}</p>
+                    {% endfor %}
+                </div>
                 {{ form.csrf_token }}
-                <div class="form-group">
-                    <input type="text" class="form-control form-control-lg" name="username" placeholder="Username"
-                           required autofocus>
-                </div>
-                <div class="form-group">
-                    <input type="password" class="form-control form-control-lg" name="password" placeholder="PassWord"
-                           required>
-                </div>
-                <button type="submit" class="btn btn-lg btn-primary btn-block">Complete</button>
 
+                <div class="form-group text-center" style="width: auto">
+                    {{ form.submit(render_kw={ "style": "width: 300px;"}) }}
+                </div>
                 <div class="create-account">
-                    already have it？<a href="#">Login</a>.
+                    已有账号？<a href="{{ url_for('login') }}">登录</a>
                 </div>
             </form>
         </div>
